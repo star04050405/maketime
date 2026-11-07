@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>maketime. 创造时间</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:Georgia,"Songti SC","Noto Serif SC",serif;background:#FAF7F0;color:#2B2B2B;line-height:1.7}
+.mono{font-family:Courier New,Courier,monospace}
+.wrap{max-width:640px;margin:0 auto;padding:0 20px}
+header{padding:60px 0 28px;text-align:center;position:relative}
+.eyebrow{font-size:12px;letter-spacing:.35em;color:#999;margin-bottom:14px}
+h1{font-size:52px;letter-spacing:-.02em;font-weight:900;color:#232323;line-height:1.05}
+h1 .dot{color:#D97B29}
+.sub{margin-top:12px;font-size:17px;color:#666}
+.sub b{color:#2B2B2B}
+.dots{display:flex;justify-content:center;gap:8px;margin:22px 0 0}
+.dots i{width:11px;height:11px;border-radius:50%}
+.book{margin-top:26px;font-size:12.5px;color:#8a8a8a;line-height:1.9}
+.book b{color:#555}
+.div{height:1px;background:linear-gradient(90deg,transparent,#D8D0BC 20%,#D8D0BC 80%,transparent);margin:30px 0}
+/* 时间黑洞 */
+.vill{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.vil{background:#fff;border:1px solid #E4DCC8;border-radius:6px;padding:16px 15px}
+.vil h4{font-size:14.5px;margin-bottom:6px}
+.vil p{font-size:12.5px;color:#777;line-height:1.75}
+.vil .tag{font-size:10px;letter-spacing:.2em;color:#B04A3A;font-family:Courier New,monospace;display:block;margin-bottom:5px}
+/* 四步引擎 */
+.loop{display:grid;grid-template-columns:1fr 44px 1fr;gap:0 4px;align-items:stretch;margin-top:18px}
+.step{background:#fff;border:1px solid #E4DCC8;border-radius:6px;padding:14px 14px 12px;position:relative}
+.step .sn{font-family:Courier New,monospace;font-size:10px;letter-spacing:.25em}
+.step h4{font-size:16px;margin:3px 0 2px}
+.step p{font-size:11.5px;color:#888;line-height:1.65}
+.step .s2{font-size:11px;color:#777;margin-top:4px;border-top:1px dashed #E0D8C4;padding-top:5px}
+.arrow{display:flex;align-items:center;justify-content:center;color:#C4B896;font-size:18px}
+.loop2{display:grid;grid-template-columns:1fr 44px 1fr;gap:0 4px;margin-top:8px}
+/* 今日重点项 hero */
+.hero{background:#fff;border:1px solid #E4DCC8;border-radius:8px;padding:22px 20px;margin-top:18px;position:relative;box-shadow:0 2px 10px rgba(80,60,20,.05)}
+.hero .hk{font-family:Courier New,monospace;font-size:11px;letter-spacing:.28em;color:#D97B29}
+.hero h3{font-size:21px;margin:8px 0 4px}
+.hero .hint{font-size:12px;color:#999;margin-bottom:12px}
+.qrow{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.qb{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid #E0D8C4;background:#FAF7F0;color:#777}
+.qb.on{border-color:#D97B29;color:#D97B29}
+#qs{font-size:13.5px;color:#555;min-height:22px;margin-bottom:10px;font-style:italic}
+#hlv{width:100%;font-size:16px;padding:11px 13px;border:1px solid #D8D0BC;border-radius:6px;background:#FDFBF5;color:#333;outline:none;font-family:inherit}
+#hlv:focus{border-color:#D97B29}
+.hact{display:flex;gap:10px;margin-top:12px}
+.hact button{flex:1;font-family:inherit;font-size:14.5px;padding:11px 0;border-radius:6px;border:none;cursor:pointer}
+#bset{background:#D97B29;color:#fff}
+#bdone{background:#FAF7F0;border:1.5px solid #D97B29;color:#D97B29}
+#bdone.ok{background:#D97B29;color:#fff}
+#bdone.ok:after{content:' ✓'}
+.hist{margin-top:16px;border-top:1px dashed #E0D8C4;padding-top:10px}
+.hist .ht{font-size:11px;font-family:Courier New,monospace;letter-spacing:.2em;color:#999;margin-bottom:6px}
+.hli{display:flex;gap:10px;align-items:baseline;font-size:13px;padding:4px 0;color:#555}
+.hli .d{font-family:Courier New,monospace;font-size:10.5px;color:#B08D3E;white-space:nowrap}
+.hli .x{text-decoration:line-through;color:#B5AB93}
+.hli .ok{color:#3A8C3A;font-weight:bold}
+.hli .tt{flex:1;word-break:break-all}
+/* 反思 */
+.rf{background:#fff;border:1px solid #E4DCC8;border-radius:8px;padding:18px 20px;margin-top:14px}
+.rf .hk{font-family:Courier New,monospace;font-size:11px;letter-spacing:.28em;color:#7B5EA7}
+.rf h3{font-size:17px;margin:8px 0 8px}
+.rf p{font-size:12px;color:#888;margin-bottom:10px}
+#rfv{width:100%;font-size:16px;padding:10px 12px;border:1px solid #D8D0BC;border-radius:6px;background:#FDFBF5;color:#333;outline:none;font-family:inherit;min-height:44px}
+#rfv:focus{border-color:#7B5EA7}
+#brf{margin-top:10px;background:#7B5EA7;color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:13.5px;padding:9px 22px;cursor:pointer}
+#brf.on{background:#5E4790}
+/* 概念卡 */
+section{margin-top:44px}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sh h2{font-size:24px;font-weight:900}
+.sh .sn{font-family:Courier New,monospace;font-size:11px;letter-spacing:.3em;color:#B08D3E}
+.sd{font-size:13px;color:#8a8a8a;margin-bottom:14px}
+/* 87墙 */
+.wall{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 10px}
+.w{width:15px;height:15px;border-radius:4px;background:#EDE7D8;border:1px solid #E0D8C4}
+.w.on{border-color:transparent}
+.w.on.p0{background:#D97B29}.w.on.p1{background:#3A6EA5}.w.on.p2{background:#5B8C5A}
+#prog{font-family:Courier New,monospace;font-size:12px;color:#999}
+.legend{display:flex;gap:14px;font-size:11.5px;color:#888;margin:8px 0 2px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* part 分区 */
+.psec{margin-top:30px;border-top:2px solid #E4DCC8;padding-top:16px}
+.psh{display:flex;align-items:baseline;gap:10px}
+.psh h3{font-size:19px;font-weight:900}
+.psh .en{font-family:Courier New,monospace;font-size:10.5px;letter-spacing:.22em}
+.pdesc{font-size:12.5px;color:#999;margin:4px 0 2px}
+.psub{font-size:12px;color:#777;margin-bottom:12px}
+.pbar{height:3px;border-radius:2px;margin:10px 0 14px;width:100%;background:#EDE7D8;position:relative;overflow:hidden}
+.pbar i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;transition:width .4s}
+.grp{font-size:13.5px;font-weight:bold;color:#444;margin:20px 0 8px;display:flex;align-items:baseline;gap:8px}
+.grp .gn{font-family:Courier New,monospace;font-size:10.5px;color:#B08D3E}
+/* 策略卡 */
+.card{background:#fff;border:1px solid #E4DCC8;border-radius:6px;margin-bottom:9px;overflow:hidden;position:relative}
+.ch{display:flex;align-items:baseline;gap:10px;padding:12px 15px;cursor:pointer}
+.cno{font-family:Courier New,monospace;font-size:11px;color:#B08D3E;white-space:nowrap}
+.czh{font-size:15.5px;font-weight:bold;color:#333;flex:1}
+.cst{font-family:Courier New,monospace;font-size:10px;color:#ccc}
+.card.on .cst{color:#3A8C3A}
+.detail{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.detail.open{max-height:500px}
+.din{padding:2px 16px 15px;border-top:1px dashed #E0D8C4}
+.din p{font-size:13.5px;color:#555;margin:10px 0 10px}
+.how{font-size:12.5px;background:#FAF6EC;border-left:3px solid #B08D3E;padding:8px 12px;color:#665;border-radius:0 4px 4px 0}
+.how b{font-family:Courier New,monospace;font-size:10px;letter-spacing:.15em;color:#B08D3E;display:block;margin-bottom:2px}
+.act{padding:0 16px 13px}
+.act button{font-family:inherit;font-size:13.5px;padding:8px 20px;border-radius:20px;border:1.5px solid #C9A87C;background:#FAF7F0;color:#8a6a3a;cursor:pointer}
+.act button.on{background:#8a6a3a;color:#FAF7F0;border-color:#8a6a3a}
+/* 终章 */
+.final{display:none;text-align:center;padding:36px 20px 30px;margin-top:44px;border:2px solid #B08D3E;border-radius:10px;position:relative;background:#fff}
+.final.show{display:block}
+.final .ft{font-family:Courier New,monospace;font-size:11px;letter-spacing:.35em;color:#B08D3E}
+.final h2{font-size:30px;margin:10px 0;color:#232323}
+.final .fq{font-size:14.5px;color:#666;margin:10px 0 0;font-style:italic}
+/* 金句 */
+.quotes{margin-top:26px}
+.q{border-left:3px solid #B08D3E;padding:10px 16px;margin-bottom:14px;background:#fff;border-radius:0 6px 6px 0;font-size:14px;color:#555}
+.q b{display:block;font-size:11px;color:#B08D3E;font-family:Courier New,monospace;letter-spacing:.2em;margin-bottom:4px}
+/* 诚实标注 */
+.honest{margin-top:34px;font-size:11.5px;color:#9a9a9a;line-height:1.9;border-top:1px solid #E4DCC8;padding-top:16px}
+footer{text-align:center;font-size:11px;color:#bbb;padding:30px 0 46px;font-family:Courier New,monospace;letter-spacing:.15em}
+#toast{position:fixed;left:50%;bottom:70px;transform:translateX(-50%) translateY(20px);background:#2B2B2B;color:#FAF7F0;font-size:13px;padding:9px 18px;border-radius:20px;opacity:0;transition:.3s;pointer-events:none;max-width:86vw;z-index:99}
+#toast.show{opacity:.94;transform:translateX(-50%)}
+@media(max-width:400px){h1{font-size:44px}.loop,.loop2{grid-template-columns:1fr 1fr}.arrow{grid-column:span 2;padding:2px 0}}
+</style>
+</head>
+<body>
+<header class="wrap">
+ <div class="eyebrow">MAKE TIME · 每日四步循环</div>
+ <h1>make time<span class="dot">.</span></h1>
+ <div class="sub">《创造时间》<b>专注于每天最重要的事</b></div>
+ <div class="dots"><i style="background:#D97B29"></i><i style="background:#3A6EA5"></i><i style="background:#5B8C5A"></i><i style="background:#7B5EA7"></i></div>
+ <div class="book mono">原作 MAKE TIME (Currency, 2018) · Jake Knapp & John Zeratsky<br>中译 浙江大学出版社 2019 · 陈丽娜 译 · 288 页</div>
+</header>
+<div class="wrap">
+ <div class="div"></div>
+ <div class="sh"><h2>你的时间，正在被两台机器吃掉</h2></div>
+ <div class="vill">
+  <div class="vil"><span class="tag">VILLAIN 01</span><h4>忙碌浪潮 Busy Bandwagon</h4><p>待办清单、邮件、会议、消息——用「高效」的外衣把你的时间卷走，让你永远在响应别人。 culturally：忙=有价值。</p></div>
+  <div class="vil"><span class="tag">VILLAIN 02</span><h4>无限池 Infinity Pool</h4><p>永远刷不完的流：社交媒体、短视频、新闻、剧集。它们被设计成没有底——你永远游不到边，也上不了岸。</p></div>
+ </div>
+ <div class="hero">
+  <div class="hk">TODAY'S HIGHLIGHT</div>
+  <h3>今日的重点项是什么？</h3>
+  <div class="hint">上面两台机器正要吃掉它 · 选一件今天不做会遗憾的事，护住 60-90 分钟</div>
+  <div class="qrow">
+   <button class="qb" onclick="setq(0)">急迫</button>
+   <button class="qb" onclick="setq(1)">满足</button>
+   <button class="qb" onclick="setq(2)">喜悦</button>
+  </div>
+  <div id="qs">点一个问题，帮你想答案 →</div>
+  <input id="hlv" placeholder="写下今天想做成的那一件事…" maxlength="80">
+  <div class="hact">
+   <button id="bset" onclick="setHL()">定下来</button>
+   <button id="bdone" onclick="doneHL()">完成今天</button>
+  </div>
+  <div class="hist">
+   <div class="ht">RECENT · 最近的重点项</div>
+   <div id="hlhist"><div class="hli" style="color:#bbb">还没有记录 · 今天写下第一条</div></div>
+  </div>
+ </div>
+ <section>
+  <div class="sh"><h2>创造时间四步循环</h2><span class="sn">THE DAILY LOOP</span></div>
+  <div class="sd">每天重复一次的引擎：选重点项 → 聚焦做成 → 保持活力 → 睡前反思。87 个策略分布在四步里。</div>
+  <div class="loop">
+   <div class="step"><span class="sn" style="color:#D97B29">STEP 1</span><h4 style="color:#D97B29">重点项</h4><p>挑出当天最重要的一件事</p><div class="s2">策略 1-16</div></div>
+   <div class="arrow">→</div>
+   <div class="step"><span class="sn" style="color:#3A6EA5">STEP 2</span><h4 style="color:#3A6EA5">聚焦</h4><p>打败分心，护住整块时间</p><div class="s2">策略 17-60</div></div>
+  </div>
+  <div class="loop2">
+   <div class="step"><span class="sn" style="color:#7B5EA7">STEP 4</span><h4 style="color:#7B5EA7">反思</h4><p>睡前笔记，精调体系</p><div class="s2">每日 3 分钟</div></div>
+   <div class="arrow">←</div>
+   <div class="step"><span class="sn" style="color:#5B8C5A">STEP 3</span><h4 style="color:#5B8C5A">保持活力</h4><p>用身体为大脑充电</p><div class="s2">策略 61-87</div></div>
+  </div>
+ </section>
+ <section>
+  <div class="sh"><h2>87 个策略 · 全目录</h2><span class="sn">87 TACTICS</span></div>
+  <div class="sd">书的全部弹药库。点开读 → 用过点亮（可熄灭）。全 87 点亮，收下 TIME MAKER 章。</div>
+  <div class="legend"><span><i style="background:#D97B29"></i>重点项 ×16</span><span><i style="background:#3A6EA5"></i>聚焦 ×44</span><span><i style="background:#5B8C5A"></i>保持活力 ×27</span></div>
+  <div class="wall" id="wall"></div>
+  <div id="prog">0 / 87</div>
+  <div id="plist"></div>
+ </section>
+ <section class="rf">
+  <div class="hk">TODAY'S REFLECT</div>
+  <h3>睡前反思 · 三分钟</h3>
+  <p>今天的重点项完成了吗？哪个策略有效？明天保留、修剪还是摒弃？写下几行，体系就是这样长出来的。</p>
+  <textarea id="rfv" placeholder="今天的复盘：什么有效，什么没效，明天怎么调…" maxlength="300"></textarea>
+  <button id="brf" onclick="saveRF()">存入笔记本</button>
+ </section>
+ <div class="final" id="final">
+  <div class="ft">ALL 87 TACTICS · TIME MAKER</div>
+  <h2>创造时间的人</h2>
+  <div class="fq">「不必追求完美。挑选、检验和重复——<br>你的体系会自己长出来。」</div>
+ </div>
+ <section>
+  <div class="sh"><h2>书里的金句</h2><span class="sn">QUOTES</span></div>
+  <div class="quotes">
+   <div class="q"><b>ELBOW GREASE</b>想每天做完所有事？每件事都追求完美？醒醒吧，不存在的！（倒是很可能提前秃顶）</div>
+   <div class="q"><b>THE POINT</b>人生苦短，精力有限。不如换个角度——为重要的人和事，创造时间。</div>
+   <div class="q"><b>CREDIT</b>书末策略 87·先戴上自己的氧气面罩：照顾好自己不是自私，是照顾别人的前提。</div>
+  </div>
+ </section>
+ <div class="honest" id="honest">· 数据诚实：87 个策略名=浙大版《创造时间》目录（诺贝尔回旋+百科双源一致）；每条细讲与 HOW 为导读式阐释，非原文摘录；页码无来源不标注。<br>· 原作 Make Time: How to Focus on What Matters Every Day（Jake Knapp & John Zeratsky, Currency 2018），曾登美国亚马逊畅销榜首位（百科实锤）；两位作者是谷歌风投「设计冲刺」流程发明者与 YouTube 前首席设计师。<br>· 本站为个人学习导读，非官方页面；策略涉及健康（饮食/咖啡因/睡眠）仅供参考，非医疗建议。</div>
+</div>
+<footer>maketime. · HIGHLIGHT → LASER → ENERGIZE → REFLECT</footer>
+<div id="toast"></div>
+<script>
+var T=[{"no": 1, "part": 0, "grp": "选择重点项", "zh": "写下来", "tip": "选好重点项就把它写下来——写在纸上、便签上、本子上。写下来的目标比留在脑子里的完成率高得多：它是你和自己签的合同。", "how": "现在把今天的重点项写在一张便签上，放在键盘边。"}, {"no": 2, "part": 0, "grp": "选择重点项", "zh": "偷天换日（昨日重现）", "tip": "不知道今天该选什么重点项？把昨天没做完、睡前一直惦记的那件事拎出来。它已经在心里排队了，顺手接上。", "how": "想想昨天什么没做完让你睡前还惦记——就是它。"}, {"no": 3, "part": 0, "grp": "选择重点项", "zh": "分级评定生活", "tip": "给生活的几个领域分别打分：工作、健康、关系、爱好……分数最低的那个，就是今天重点项的最佳候选——去补最短的那块板。", "how": "给五个生活领域各打 1-5 分，看哪个最低。"}, {"no": 4, "part": 0, "grp": "选择重点项", "zh": "打包小事件", "tip": "一堆 10 分钟的小事在脑子里嗡嗡作响？把它们打包成一个「大扫除重点项」，一口气批量清掉——清完的清爽感就是回报。", "how": "把三件 10 分钟小杂事打包成今天的重点项。"}, {"no": 5, "part": 0, "grp": "选择重点项", "zh": "或办清单", "tip": "不想被待办清单绑架？改成「或办清单」：列出所有可选项，但每天只挑一件，其他都是「或者也可以办」——不欠、不亏。", "how": "列一份「或办清单」，今天只挑一件。"}, {"no": 6, "part": 0, "grp": "选择重点项", "zh": "火炉清单", "tip": "想象你躺在病床上回望：这辈子真正想做的是什么？写下 100 件——这就是「火炉清单」。每天从中抽一件当重点项，人生不留遗憾。", "how": "写下火炉清单的前五条，挑一件给今天。"}, {"no": 7, "part": 0, "grp": "选择重点项", "zh": "个人冲刺", "tip": "学门手艺、写个东西、做个小项目——给自己开一个 14 天的「个人冲刺」，每天的重点项都是它，跑完你会带回一样新东西。", "how": "定一个 14 天个人冲刺主题，从今天开始。"}, {"no": 8, "part": 0, "grp": "为重点项创造时间", "zh": "安排重点项", "tip": "重点项光选不够，要在日历上圈出 60-90 分钟的整块时间。放进日程的重点项才有保护伞，不然会被一整天的「忙碌浪潮」冲走。", "how": "打开日历，为明天的重点项圈出 90 分钟。"}, {"no": 9, "part": 0, "grp": "为重点项创造时间", "zh": "封锁日程表", "tip": "别人的会议请求会蚕食你的时间。主动封锁：把日历块先标成「忙碌」——防别人占你的时间，就是防自己失去重点项。", "how": "把下周某一天的日历全部标记为不可约。"}, {"no": 10, "part": 0, "grp": "为重点项创造时间", "zh": "推平日程表", "tip": "每周挑一天，不安排任何会议、任何约见——整天空着留给深度工作。这一天会是你产出最高、也最像「人」的一天。", "how": "下周选一天试试「无会议日」。"}, {"no": 11, "part": 0, "grp": "为重点项创造时间", "zh": "推掉不那么重要的事情", "tip": "审视每件待办，问一句：这件事真的需要做吗？不做会怎样？你会惊讶地发现，很多「必须」其实只是惯性。", "how": "从待办清单里划掉一件事，观察三天后果。"}, {"no": 12, "part": 0, "grp": "为重点项创造时间", "zh": "只需说「不」", "tip": "对别人的请求，「不」是完整的句子，不需要理由也不需要内疚。每说一次不，就是为重点项多保住一块时间。", "how": "今天对一个可接可不接的请求，说一次「不」。"}, {"no": 13, "part": 0, "grp": "为重点项创造时间", "zh": "设计你的一天", "tip": "别被动响应别人设计的日程：主动画你的一天——重点项放上午、邮件批量放下午、晚上留白。设计权在你手里。", "how": "把明天的时间块亲手画出来：重点项在几点？"}, {"no": 14, "part": 0, "grp": "为重点项创造时间", "zh": "成为晨型人", "tip": "早晨是重点项的黄金时段：世界还没醒、消息还没来、意志力还是满格。把最重要的 90 分钟搬到天亮时分。", "how": "明早提前一小时起床，只做重点项。"}, {"no": 15, "part": 0, "grp": "为重点项创造时间", "zh": "夜间才是重点项时间", "tip": "夜猫子别硬改生物钟：晚上 9 点到 12 点同样是无人打扰的深度时间。重点是「有一个专属时段」，不必是早晨。", "how": "今晚 21-23 点，只留给重点项。"}, {"no": 16, "part": 0, "grp": "为重点项创造时间", "zh": "做完就停下", "tip": "重点项完成的那一刻，收工。不无限加码、不「顺手再做一点」——完成感是明天继续的动力，别把它透支掉。", "how": "完成今天重点项后，合上电脑说一句「今天够了」。"}, {"no": 17, "part": 1, "grp": "做你手机的主人", "zh": "无干扰手机", "tip": "作者标志性策略：把手机上所有非必需 App 删掉、照片通话留下，让它退化成一个「哑终端」。手机变无聊了，你就会去干正事。", "how": "删掉最吸你时间的那一个 App，今天。"}, {"no": 18, "part": 1, "grp": "做你手机的主人", "zh": "退出登录", "tip": "不舍得卸载？每次用完就退出登录。下次想刷，得先输密码——这一点摩擦成本，足够让你三思。", "how": "现在退出一个社交媒体的登录状态。"}, {"no": 19, "part": 1, "grp": "做你手机的主人", "zh": "关闭消息推送", "tip": "只保留「人类发给你的消息」（电话、真人短信），关掉一切 App 推送。你不是雷达站，不需要接收全世界的信号。", "how": "关掉两个 App 的推送权限。"}, {"no": 20, "part": 1, "grp": "做你手机的主人", "zh": "清空主界面", "tip": "把主屏清空：所有图标收进文件夹或第二屏，只留壁纸。每次亮屏都是一次空白——拿手机没事干，就放回去。", "how": "把主屏上的图标全部移走。"}, {"no": 21, "part": 1, "grp": "做你手机的主人", "zh": "戴腕表", "tip": "看时间这件事，交给手表。「掏手机看个时间然后刷四十分钟」的经典事故，从手腕上终结。", "how": "翻出一块手表，今天戴上。"}, {"no": 22, "part": 1, "grp": "做你手机的主人", "zh": "将设备抛与脑后", "tip": "物理隔离最有效：手机放另一个房间、包最深处、抽屉里。看不见=想不起来=专注。", "how": "接下来一小时，把手机放到看不见的地方。"}, {"no": 23, "part": 1, "grp": "远离「无底洞」", "zh": "跳过早晨签到", "tip": "醒来后别立刻看手机：一天的头 30 分钟不属于收件箱和热搜。让大脑先开机，再连网。", "how": "明早起床 30 分钟内不碰手机。"}, {"no": 24, "part": 1, "grp": "远离「无底洞」", "zh": "封锁分心氪石", "tip": "每个人都有专属「氪石」——那个一碰就消失两小时的 App。用屏幕时间、专注模式把它硬封住。", "how": "给你最大的氪石 App 设 20 分钟每日限额。"}, {"no": 25, "part": 1, "grp": "远离「无底洞」", "zh": "忽视新闻", "tip": "新闻 99% 与你无关，真正重要的会自己来找你。省下的时间是你自己的——注意力是你最贵的资产。", "how": "本周不打开任何新闻 App。"}, {"no": 26, "part": 1, "grp": "远离「无底洞」", "zh": "完毕后归位", "tip": "用完设备就关屏、放回固定位置。别让它在手边随时待命地亮——它不是你的宠物。", "how": "用完手机就放回桌上固定位置。"}, {"no": 27, "part": 1, "grp": "远离「无底洞」", "zh": "不连飞机 WiFi", "tip": "飞行时间是天然的深度时间舱。别花 30 块买回干扰——那笔钱买的是三个小时的完整人生。", "how": "下次飞行，不连 WiFi。"}, {"no": 28, "part": 1, "grp": "远离「无底洞」", "zh": "装置假日定时器", "tip": "周末给全家设「设备时段」：定时器响才能开屏幕。其余时间——聊天、出门、发呆。", "how": "设一个 60 分钟的「无设备时段」。"}, {"no": 29, "part": 1, "grp": "远离「无底洞」", "zh": "取消网络服务", "tip": "流媒体订阅的存在本身就是诱惑：交了钱你会想「用回本」。该取消就取消，想看再单买。", "how": "取消一个流媒体订阅。"}, {"no": 30, "part": 1, "grp": "远离「无底洞」", "zh": "提防时间坑洞", "tip": "每个人的一天里都有专属坑洞：等咖啡、通勤、厕所刷手机。识别它们，逐个设防——坑洞灌满前先堵上。", "how": "列出你的三个时间坑洞。"}, {"no": 31, "part": 1, "grp": "远离「无底洞」", "zh": "假赢换成真赢", "tip": "游戏通关、收齐卡牌、连击打卡——都是设计出来喂你的「假赢」。真赢只有一种：今天重点项完成了。", "how": "卸掉一个用「假赢」喂你的 App。"}, {"no": 32, "part": 1, "grp": "远离「无底洞」", "zh": "化分心为工具", "tip": "让工具替你挡分心：白噪音、专注 App、灰度模式、无字模式。工具是你的保安，不是新的坑。", "how": "打开一个专注工具，用满 25 分钟。"}, {"no": 33, "part": 1, "grp": "远离「无底洞」", "zh": "做个同甘型「伪球迷」", "tip": "不追直播、不蹲热搜：赛后看十分钟集锦和比分，快乐不减，时间省下两小时。体育、剧集、热点同理。", "how": "关注一项赛事，但只看赛果。"}, {"no": 34, "part": 1, "grp": "降低收件箱的处理频率", "zh": "在一天结束时处理邮件", "tip": "邮件一天批一次，放在一天结束时——上午的黄金时间属于重点项，不属于别人的待办。", "how": "把邮件 App 移到最后一屏，今天只开一次。"}, {"no": 35, "part": 1, "grp": "降低收件箱的处理频率", "zh": "安排处理邮件的时间", "tip": "给邮件定死时段：比如 13:00 和 17:00 各一次，每次 20 分钟。批量处理，不全天待命。", "how": "日历里写死两个邮件时段。"}, {"no": 36, "part": 1, "grp": "降低收件箱的处理频率", "zh": "每周清空一次收件箱", "tip": "每周五 30 分钟，把收件箱清到零：归档、回复、转待办。收件箱是传送带，不是仓库。", "how": "把收件箱清到只留 5 封。"}, {"no": 37, "part": 1, "grp": "降低收件箱的处理频率", "zh": "把邮件当作信件", "tip": "像老派写信一样对待邮件：重要、郑重、不即时。晚几个小时回复，天不会塌，但你的专注会保住。", "how": "一封不急的邮件，明天再回。"}, {"no": 38, "part": 1, "grp": "降低收件箱的处理频率", "zh": "慢些回复", "tip": "慢慢养成「非即时」的声誉：别人不再期待你秒回，你的时间就自由了。响应速度是你自己教给世界的。", "how": "今天故意晚两小时回一条消息。"}, {"no": 39, "part": 1, "grp": "降低收件箱的处理频率", "zh": "重设期望值", "tip": "用签名档和自动回复，明示你的节奏：「我每天查看两次邮件」。你先定义规则，别人才有规则可依。", "how": "签名档加一句「我每天查看两次邮件」。"}, {"no": 40, "part": 1, "grp": "降低收件箱的处理频率", "zh": "设置发送专用邮箱", "tip": "一个只发不收的邮箱：用来发东西、发订阅，永不打开收件箱。发送通道单向化，世界安静一半。", "how": "注册一个 no-reply 邮箱给订阅用。"}, {"no": 41, "part": 1, "grp": "降低收件箱的处理频率", "zh": "假期离线", "tip": "休假=真空离线：设好自动回复，然后真正消失。回来那天你会发现：没有你，地球转得很好。", "how": "下次休假，设自动回复不查邮件。"}, {"no": 42, "part": 1, "grp": "降低收件箱的处理频率", "zh": "自我封锁", "tip": "最需要封锁的是你自己：写好邮件定时发送（对方上班时间才收到），别在深夜开火。how 也适用于深夜冲动消息。", "how": "装一个定时发送工具，今晚就用。"}, {"no": 43, "part": 1, "grp": "把看电视当作「偶尔奖励」", "zh": "不要看新闻", "tip": "电视新闻和手机新闻一样：制造焦虑的无限池。世界大事会在你需要的时刻找到你。how：晚饭不开电视新闻。", "how": "今晚不开电视新闻，试试聊天或音乐。"}, {"no": 44, "part": 1, "grp": "把看电视当作「偶尔奖励」", "zh": "把电视放角落", "tip": "电视不该占客厅 C 位。把它挪到角落，正对沙发的地方留给人和交流——看电视从「默认」变成「特意」。", "how": "把电视挪离正对沙发的位置。"}, {"no": 45, "part": 1, "grp": "把看电视当作「偶尔奖励」", "zh": "把电视换成投影仪", "tip": "投影仪式感强、启动成本高：拉幕、开机、调焦——看片变成一场仪式，而不是瘫下就刷的默认状态。", "how": "考虑把电视换成投影：想看的时候再投。"}, {"no": 46, "part": 1, "grp": "把看电视当作「偶尔奖励」", "zh": "把「自助」换成「单点」", "tip": "流媒体无限刷=自助餐厅，吃到扶墙还觉得自己赚了。换成单点：想清楚要看什么，再去买/租那一部。", "how": "今晚只看一部提前选好的片子，看完即关。"}, {"no": 47, "part": 1, "grp": "把看电视当作「偶尔奖励」", "zh": "爱它就给它自由", "tip": "一部剧追完，就放它走：关掉自动连播，别让平台牵着你遛。真正的爱是「我决定停」，不是「刷到天亮」。", "how": "关掉播放器的自动连播。"}, {"no": 48, "part": 1, "grp": "找到节奏", "zh": "关门", "tip": "物理关门、戴上耳机：给周围的人一个「专注中」的可见信号。门是最便宜也最有效的屏障。", "how": "下一个 90 分钟，把门关上。"}, {"no": 49, "part": 1, "grp": "找到节奏", "zh": "设定一个截止日期", "tip": "「明天要交」是最好的聚焦器：死线给重点项装上倒计时。没有死线的重点项会漂到下周。", "how": "给今天的重点项定一个具体的死线。"}, {"no": 50, "part": 1, "grp": "找到节奏", "zh": "爆破你的重点项", "tip": "大目标吓人，切成今天能炸的小块就不可怕。把「写书」爆破成「今天写 500 字」。", "how": "把重点项拆成 60 分钟能完成的块。"}, {"no": 51, "part": 1, "grp": "找到节奏", "zh": "播放聚焦歌单", "tip": "重复、无词、中等音量的音乐是聚焦的隧道：同一段旋律循环，大脑把它当背景墙。", "how": "找一个无词歌单，单曲循环 90 分钟。"}, {"no": 52, "part": 1, "grp": "找到节奏", "zh": "设置可视定时器", "tip": "可视倒计时（Time Timer 那种红色扇形）让你「看见」时间流逝——deadline 变成看得见的压力，专注变成看得见的游戏。", "how": "手机倒计时 20 分钟，放桌上看得见的地方。"}, {"no": 53, "part": 1, "grp": "找到节奏", "zh": "回避新兴玩意儿的诱惑", "tip": "新工具、新设备、新 App 是隐形时间坑：尝鲜的兴奋会偷走你原本攒好的整块时间。旧工具够用就继续用。", "how": "这个月不买任何新工具。"}, {"no": 54, "part": 1, "grp": "找到节奏", "zh": "纸上工作", "tip": "重要的事用纸做：笔记本、白板、一张 A4——纸不上网、不弹通知、不闪。它是这个时代最后的净土。", "how": "今晚做明天的计划，只用纸和笔。"}, {"no": 55, "part": 1, "grp": "保持状态", "zh": "创建「随机问题」清单", "tip": "专注时脑中冒出的小问题（「那家店几点关门？」）记到清单上，回头统一处理——不打断当下，也不怕忘。", "how": "手边放一张「稍后想」清单，随时记。"}, {"no": 56, "part": 1, "grp": "保持状态", "zh": "感受呼吸", "tip": "分心时回到呼吸：三次深长的呼吸，十秒钟，把你从念头洪流里捞回来。最便宜的 reset 键。", "how": "现在：深呼吸三次，数一数呼气。"}, {"no": 57, "part": 1, "grp": "保持状态", "zh": "无聊", "tip": "排队、等车、电梯里——别掏手机。无聊是大脑的后台整理时间：留白才有灵感来敲门。", "how": "今天排队时，什么都不做。"}, {"no": 58, "part": 1, "grp": "保持状态", "zh": "卡壳", "tip": "卡住时别刷手机逃避：卡壳是思考的深水区，坐满它。三分钟后你要么突破，要么知道该休息了。", "how": "下次卡壳，逼自己坐满三分钟。"}, {"no": 59, "part": 1, "grp": "保持状态", "zh": "放一天假", "tip": "每周留一天真正的假：不定重点项、不自我提升、随便过。休息不是奖励，是体系的维护日。", "how": "本周留一天，无计划。"}, {"no": 60, "part": 1, "grp": "保持状态", "zh": "全身心投入", "tip": "正念不必打坐：洗碗时就洗碗、走路时就走路。全身心投入一件小事，就是专注的肌肉训练。", "how": "今晚洗碗，只洗碗。"}, {"no": 61, "part": 2, "grp": "动起来", "zh": "每天锻炼（但别逞能）", "tip": "每天动一动，但不必每次力竭：目标是「每天都在动」的链条，不是单日的个人纪录。可持续压倒强度。", "how": "今天 20 分钟轻运动：快走、拉伸都算。"}, {"no": 62, "part": 2, "grp": "动起来", "zh": "走路", "tip": "最被低估的活力与思考工具：走路时大脑的默认模式网络开动——很多卡住的问题，是走出来的。", "how": "饭后走 15 分钟，不带耳机。"}, {"no": 63, "part": 2, "grp": "动起来", "zh": "制造不便", "tip": "把便利反着用：车停远两个车位、地铁提前一站下、不坐电梯。不便就是免费的健身房。", "how": "今天把车停远一点，或提前一站下车。"}, {"no": 64, "part": 2, "grp": "动起来", "zh": "挤出超短时来锻炼", "tip": "没时间？7 分钟也行。微量的每日持续，好过零——俯卧撑、深蹲、平板，不需要换衣服。", "how": "现在：20 个深蹲。"}, {"no": 65, "part": 2, "grp": "吃真正的食物", "zh": "学习狩猎采集者的吃法", "tip": "参照原始人的菜单：吃「会被认出是食物」的食物——菜、果、肉、坚果，少吃包装里配料表三行起步的。", "how": "这顿饭先吃蔬菜和蛋白质。"}, {"no": 66, "part": 2, "grp": "吃真正的食物", "zh": "餐盘中央公园化", "tip": "像城市规划绿地一样规划餐盘：一半给蔬菜，四分之一蛋白质，四分之一主食。城市需要公园，餐盘也需要。", "how": "今晚的餐盘，一半装蔬菜。"}, {"no": 67, "part": 2, "grp": "吃真正的食物", "zh": "保持饥饿", "tip": "吃到八分饱就停：微饿状态下大脑更清醒，血糖更平稳——也给下一餐留一点期待。", "how": "这顿吃到「还想再来一口」时，放下筷子。"}, {"no": 68, "part": 2, "grp": "吃真正的食物", "zh": "像孩童一样吃零食", "tip": "零食少量多次：像小孩一样，一小把坚果、一个水果——血糖走平路，下午不犯困。", "how": "下午加一小把坚果当零食。"}, {"no": 69, "part": 2, "grp": "吃真正的食物", "zh": "吃黑巧克力", "tip": "甜点 craving 时换成 85% 黑巧：满足感不减，糖负载骤降。给自己备一块，别跟意志力硬碰。", "how": "备一块 85% 黑巧克力。"}, {"no": 70, "part": 2, "grp": "善用咖啡因", "zh": "摄入咖啡因之前醒来", "tip": "起床后 30-60 分钟先别碰咖啡因：让皮质醇先干它自己的活，咖啡因再上场才有效——不然是浪费弹药。", "how": "明早醒来 45 分钟后再喝第一口咖啡。"}, {"no": 71, "part": 2, "grp": "善用咖啡因", "zh": "崩溃之前摄入咖啡因", "tip": "咖啡因是急救药，不是日常饮料：在「快撑不住」之前喝才有效——平时省着用，关键刻救命。", "how": "今天把咖啡留给最困之前的那一小时。"}, {"no": 72, "part": 2, "grp": "善用咖啡因", "zh": "摄入咖啡因后小憩", "tip": "咖啡+20 分钟小睡=双倍火力：咖啡因大约 20 分钟起效，正好在你醒来时上线。「咖啡盹」是科学。", "how": "午后困时，喝半杯咖啡立刻闭眼 20 分钟。"}, {"no": 73, "part": 2, "grp": "善用咖啡因", "zh": "喝绿茶保持状态", "tip": "绿茶是咖啡因的温柔版：L-茶氨酸平缓释放，清醒而不心悸、不塌方。下午的默认饮料换成它。", "how": "今天下午的咖啡换成绿茶。"}, {"no": 74, "part": 2, "grp": "善用咖啡因", "zh": "为重点项涡轮加速", "tip": "把咖啡因用在刀刃上：重点项开始前喝，给大脑装涡轮；杂事时段喝水——省下来的弹药只打重要的仗。", "how": "明天只在重点项开始前喝咖啡。"}, {"no": 75, "part": 2, "grp": "善用咖啡因", "zh": "找到「最后一刻」", "tip": "每个人每天都有生理黄金档——精力最好的那一两小时。连续记录三天找到它，把重点项放进去。", "how": "记录三天的精力曲线，找到你的黄金时段。"}, {"no": 76, "part": 2, "grp": "善用咖啡因", "zh": "断糖", "tip": "糖是假活力：冲高之后必塌方，午后困倦的元凶常是上午的糖。断糖一周，看看你的下午。", "how": "今天不喝任何含糖饮料。"}, {"no": 77, "part": 2, "grp": "离线", "zh": "拥抱自然", "tip": "绿色空间是真正的精神充电宝：公园 20 分钟=电池回血。不需要登山徒步，楼下有树就行。", "how": "今天在树下坐十分钟。"}, {"no": 78, "part": 2, "grp": "离线", "zh": "巧入冥想", "tip": "冥想不必正襟危坐：走路冥想、洗碗冥想、排队冥想——注意力温柔地放在一件小事上，就是冥想。", "how": "洗碗时，只感受水温。"}, {"no": 79, "part": 2, "grp": "离线", "zh": "把耳机留在家里", "tip": "通勤别戴耳机：给耳朵留白。观察车厢里的人、街边的树——世界在没有配乐的时候也很好看。", "how": "下次通勤不戴耳机。"}, {"no": 80, "part": 2, "grp": "离线", "zh": "真正的休息", "tip": "刷手机不是休息，是换一种消耗。真正的休息：闭眼、散步、发呆、看云——让注意力松开，而不是换个抓手。", "how": "午后休息 10 分钟，不看任何屏幕。"}, {"no": 81, "part": 2, "grp": "注重人际来往", "zh": "与部落共度时光", "tip": "人是社交动物：跟「你的部落」——让你充电的那些人——待一会儿，不是浪费时间，是充电的另一种形式。", "how": "约一个让你感觉变好的朋友。"}, {"no": 82, "part": 2, "grp": "注重人际来往", "zh": "吃饭不看屏幕", "tip": "跟人吃饭时看屏幕=双重损失：既没吃出滋味，也没聊出营养。饭桌是最后一块无屏圣地。", "how": "下一顿饭，不看任何屏幕。"}, {"no": 83, "part": 2, "grp": "穴居睡眠", "zh": "把卧室真正当作睡觉的场所", "tip": "卧室只有一个用途：睡觉。工作、刷剧、手机全部清出去——让大脑建立「进卧室=要睡了」的条件反射。", "how": "把工作相关的东西从卧室清出去。"}, {"no": 84, "part": 2, "grp": "穴居睡眠", "zh": "伪造日落", "tip": "晚上 9 点后调暗灯光：只开小灯、暖光——人工日落告诉身体褪黑素该上班了。手机也调成暖屏。", "how": "今晚 21 点后只开一盏小灯。"}, {"no": 85, "part": 2, "grp": "穴居睡眠", "zh": "偷闲打盹", "tip": "白天 20 分钟小盹是合法加餐：不是懒，是维护。爱迪生、达芬奇、丘吉尔都懂。", "how": "找个角落，15 分钟闭眼。"}, {"no": 86, "part": 2, "grp": "穴居睡眠", "zh": "避免作息颠倒", "tip": "作息漂移是精力的隐形杀手：今天 1 点睡明天 11 点起，身体永远在倒时差。锚定一个固定的起床时间。", "how": "明天固定时间起床，无论今晚几点睡。"}, {"no": 87, "part": 2, "grp": "穴居睡眠", "zh": "先戴上自己的氧气面罩", "tip": "飞机安全须知的哲学：先给自己戴好氧气面罩，再帮别人。压轴策略——照顾好自己不是自私，是照顾别人的前提。", "how": "本周做一件「只为自己」的事。"}],PARTS=[{"zh": "重点项", "en": "HIGHLIGHT", "desc": "挑选重点项，开启每一天", "color": "#D97B29", "sub": "今天想做成的那一件事（60-90 分钟）"}, {"zh": "聚焦", "en": "LASER", "desc": "打败分心，为重点项创造时间", "color": "#3A6EA5", "sub": "护住整块时间，进入激光模式"}, {"zh": "保持活力", "en": "ENERGIZE", "desc": "用身体为大脑充电", "color": "#5B8C5A", "sub": "精力是燃料：吃、动、睡、晒太阳"}, {"zh": "反思", "en": "REFLECT", "desc": "调整并改善体系", "color": "#7B5EA7", "sub": "睡前笔记：保留、修剪、摒弃"}],QS=["急迫 · 今天最要紧的是什么？", "满足 · 今晚回想，哪件事最让我满足？", "喜悦 · 回想今天，什么会带来最多喜悦？"];
+var lit=JSON.parse(localStorage.getItem('mt_read')||'[]');
+function save(){localStorage.setItem('mt_read',JSON.stringify(lit))}
+function isLit(i){return lit.indexOf(T[i].no)>=0}
+function renderWall(){
+ var w=document.getElementById('wall');w.innerHTML='';
+ for(var i=0;i<87;i++){
+  var d=document.createElement('div');
+  d.className='w p'+T[i].part+(isLit(i)?' on':'');
+  d.title=T[i].no+'. '+T[i].zh;
+  d.onclick=function(no){return function(){
+   var idx=-1;for(var k=0;k<87;k++)if(T[k].no===no)idx=k;
+   var c=document.getElementById('c'+idx);if(!c.classList.contains('open'))c.querySelector('.ch').click();
+   c.scrollIntoView({behavior:'smooth',block:'center'});
+  }}(T[i].no);
+  w.appendChild(d);
+ }
+ var p=document.getElementById('prog');p.textContent=lit.length+' / 87';
+}
+function renderList(){
+ var l=document.getElementById('plist');l.innerHTML='';
+ for(var pi=0;pi<3;pi++){
+  var P=PARTS[pi],count=0;
+  for(var k=0;k<87;k++)if(T[k].part===pi&&lit.indexOf(T[k].no)>=0)count++;
+  var total=pi===0?16:(pi===1?44:27);
+  var psec=document.createElement('div');psec.className='psec';
+  psec.innerHTML='<div class="psh"><h3 style="color:'+P.color+'">'+P.zh+'</h3><span class="en" style="color:'+P.color+'">'+P.en+'</span></div>'
+   +'<div class="pdesc">'+P.desc+'</div><div class="psub">'+P.sub+'</div>'
+   +'<div class="pbar"><i id="pb'+pi+'" style="background:'+P.color+';width:'+(count/total*100)+'%"></i></div><div id="pl'+pi+'"></div>';
+  l.appendChild(psec);
+  var pl=psec.querySelector('#pl'+pi);
+  var lastGrp='';
+  for(var ii=0;ii<87;ii++){
+   var i=ii;if(T[i].part!==pi)continue;
+   if(T[i].grp!==lastGrp){
+    lastGrp=T[i].grp;
+    var g=document.createElement('div');g.className='grp';
+    var startNo=T[i].no,endNo=startNo;var jj=ii;
+    while(jj<87&&T[jj].grp===lastGrp&&T[jj].part===pi){endNo=T[jj].no;jj++}
+    g.innerHTML=T[i].grp+' <span class="gn">N°'+startNo+'-'+endNo+'</span>';
+    pl.appendChild(g);
+   }
+   var c=document.createElement('div');c.id='c'+i;
+   var on=isLit(i);
+   c.className='card'+(on?' on':'');
+   c.innerHTML='<div class="ch" onclick="openCard('+i+',event)">'
+    +'<span class="cno mono">'+T[i].no+'</span><span class="czh">'+T[i].zh+'</span><span class="cst">'+(on?'USED ✓':'→')+'</span></div>'
+    +'<div class="detail"><div class="din"><p>'+T[i].tip+'</p><div class="how"><b>HOW · 今天就能做</b>'+T[i].how+'</div></div>'
+    +'<div class="act"><button '+(on?'class="on"':'')+' onclick="mark('+i+')">'+(on?'用过了':'试过这个 ✓')+'</button></div></div>';
+   pl.appendChild(c);
+  }
+ }
+}
+function openCard(i,ev){
+ var c=document.getElementById('c'+i);
+ var det=c.querySelector('.detail');
+ if(!det.classList.contains('open')){det.classList.add('open');return}
+}
+function mark(i){
+ if(isLit(i)){
+  lit.splice(lit.indexOf(T[i].no),1);save();renderWall();renderList();
+  document.getElementById('final').classList.remove('show');
+  toast('策略 '+T[i].no+' 已熄灭');return;
+ }
+ lit.push(T[i].no);save();renderWall();renderList();
+ toast('N°'+T[i].no+' '+T[i].zh+' ✓');
+ if(lit.length===87){
+  setTimeout(function(){document.getElementById('final').classList.add('show')},400);
+  setTimeout(function(){window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})},800);
+ }
+}
+/* 今日重点项 */
+function dk(){var t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')}
+function setq(k){
+ var bs=document.querySelectorAll('.qb');
+ for(var i=0;i<bs.length;i++)bs[i].classList.toggle('on',i===k);
+ document.getElementById('qs').textContent=QS[k];
+}
+function setHL(){
+ var v=document.getElementById('hlv').value.trim();
+ if(!v){toast('先写下今天的那件事');return}
+ var o=JSON.parse(localStorage.getItem('mt_hl_'+dk())||'null')||{txt:'',done:false};
+ o.txt=v;o.done=o.done&&false||false;
+ localStorage.setItem('mt_hl_'+dk(),JSON.stringify(o));
+ toast('定下来了 · 今天就为它创造时间');renderHist();
+}
+function doneHL(){
+ var o=JSON.parse(localStorage.getItem('mt_hl_'+dk())||'null');
+ if(!o||!o.txt){toast('先定下今天的重点项');return}
+ o.done=!o.done;
+ localStorage.setItem('mt_hl_'+dk(),JSON.stringify(o));
+ document.getElementById('bdone').classList.toggle('ok',o.done);
+ if(o.done){toast('完成今天 ✓ 漂亮');confetti()}else toast('取消了完成标记');
+}
+function renderHist(){
+ var arr=[];
+ for(var i=0;i<localStorage.length;i++){
+  var k=localStorage.key(i);
+  if(k&&k.indexOf('mt_hl_')===0){
+   try{var o=JSON.parse(localStorage.getItem(k));o.date=k.slice(6);arr.push(o)}catch(e){}
+  }
+ }
+ arr.sort(function(a,b){return b.date.localeCompare(a.date)});
+ var h=document.getElementById('hlhist');
+ if(!arr.length){h.innerHTML='<div class="hli" style="color:#bbb">还没有记录 · 今天写下第一条</div>';return}
+ h.innerHTML=arr.slice(0,7).map(function(o){
+  return '<div class="hli"><span class="d">'+o.date+'</span><span class="'+(o.done?'ok':'tt')+'">'+(o.done?'✓ ':'')+'</span><span class="tt'+(o.done?' x':'')+'">'+esc(o.txt)+'</span></div>';
+ }).join('');
+ var today=arr[0];
+ if(today&&today.date===dk()){document.getElementById('hlv').value=today.txt;document.getElementById('bdone').classList.toggle('ok',today.done)}
+}
+function saveRF(){
+ var v=document.getElementById('rfv').value.trim();
+ if(!v){toast('写下几行再存');return}
+ localStorage.setItem('mt_rf_'+dk(),v);
+ document.getElementById('brf').classList.add('on');
+ toast('已存入今天的反思 · 明天继续');
+}
+function esc(s){return s.replace(/[<>&"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]})}
+function confetti(){
+ var cs=['#D97B29','#3A6EA5','#5B8C5A','#7B5EA7','#B08D3E'];
+ for(var i=0;i<36;i++){
+  var e=document.createElement('div');
+  e.style.cssText='position:fixed;z-index:98;width:7px;height:7px;background:'+cs[i%5]+';left:'+(Math.random()*100)+'vw;top:-12px;border-radius:'+(Math.random()>.5?'50%':'2px')+';pointer-events:none;transition:transform '+(1.4+Math.random())+'s ease-in,opacity 1.8s';
+  document.body.appendChild(e);
+  (function(e){setTimeout(function(){e.style.transform='translateY(105vh) rotate('+(Math.random()*540)+'deg)';e.style.opacity='0'},20);setTimeout(function(){e.remove()},3000)})(e);
+ }
+}
+var tt;
+function toast(s){var t=document.getElementById('toast');t.textContent=s;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show')},2000)}
+/* 反思回填 */
+var rfv=localStorage.getItem('mt_rf_'+dk());
+if(rfv){document.getElementById('rfv').value=rfv;document.getElementById('brf').classList.add('on')}
+renderWall();renderList();renderHist();
+if(lit.length===87){document.getElementById('final').classList.add('show')}
+</script>
+</body>
+</html>
